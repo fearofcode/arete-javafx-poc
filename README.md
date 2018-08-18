@@ -16,8 +16,6 @@ Setup
 - Make a database called `arete`, username `arete`, password `arete`
 - Build a JAR with `mvn clean package`
 - Run the created JAR with `java -tar target/<output>.jar`.
-- You can check for bugs with `mvn spotbugs:check`. Right now it doesn't give any errors and I intend to keep it that
-way!
 
 LICENSE
 =======
