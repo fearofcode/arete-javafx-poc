@@ -5,8 +5,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -15,8 +13,6 @@ import java.net.URL;
 
 @SpringBootApplication
 public class DemoApplication extends Application {
-    private static final Logger log = LoggerFactory.getLogger(DemoApplication.class);
-
     private ConfigurableApplicationContext springContext;
     private Parent root;
 
@@ -25,6 +21,8 @@ public class DemoApplication extends Application {
         springContext = SpringApplication.run(DemoApplication.class);
         URL sampleURL = getClass().getResource("/sample.fxml");
         FXMLLoader fxmlLoader = new FXMLLoader(sampleURL);
+        // this is the critical line that makes this entire thing work.
+        // see http://www.greggbolinger.com/let-spring-be-your-javafx-controller-factory/ .
         fxmlLoader.setControllerFactory(springContext::getBean);
         root = fxmlLoader.load();
     }
@@ -44,6 +42,8 @@ public class DemoApplication extends Application {
 
     /**
      * Not needed to run in an IDE, but definitely needed for an executable JAR (`spring-boot-maven-plugin`) to work.
+     *
+     * If this is removed, `java -jar` will throw a `NoSuchMethodException` even though the build passed.
      */
     public static void main(String[] args) {
         launch(args);
