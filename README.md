@@ -1,18 +1,11 @@
 arete
 =====
 
-Experimental project to try to practice programming via spaced repetition.
+This was going to be a JavaFX-Spring Boot project until I got blocked by building executable JARs.
 
-We'll see how it goes.
+It builds in IntelliJ once you add modules to the compiler, but making an executable JAR is apparently fucked.
 
-Setup
-=====
-
-- Make a PostgreSQL database called `arete`, user `arete`, password `arete`
-- Configure PostgreSQL however you like:
-    - `shared_buffers = 4GB`
-    - `random_page_cost = 1.5`
-    - etc
+Bah.
 
 LICENSE
 =======
