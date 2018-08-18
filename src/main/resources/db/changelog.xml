@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="wkh">
+        <!--
+            if refactoring to subfiles, pull the entire <changeSet> chunk into its own file and then add something like:
+                <include file="changelog/0001-create-sample-.xml" relativeToChangelogFile="true"/>
+        -->
+        <createTable tableName="customers">
+            <column name="id" type="serial" />
+            <column name="first_name" type="varchar(255)" />
+            <column name="last_name" type="varchar(255)" />
+        </createTable>
+        <createIndex tableName="customers" indexName="first_name_idx">
+            <column name="first_name"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
