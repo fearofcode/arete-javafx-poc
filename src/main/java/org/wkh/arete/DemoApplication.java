@@ -41,4 +41,11 @@ public class DemoApplication extends Application {
     public void stop() {
         springContext.stop();
     }
+
+    /**
+     * Not needed to run in an IDE, but definitely needed for an executable JAR (`spring-boot-maven-plugin`) to work.
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
 }

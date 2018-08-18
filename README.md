@@ -1,11 +1,13 @@
 arete
 =====
 
-This was going to be a JavaFX-Spring Boot project until I got blocked by building executable JARs.
+Uses Spring Boot and JavaFX to create a practice environment for programming. Still experimenting.
 
-It builds in IntelliJ once you add modules to the compiler, but making an executable JAR is apparently fucked.
+Known issues
+============
 
-Bah.
+No provision for security. This is intended to be run locally. If you write code that runs `rm -rf /`, it will damage your system.
+Please do not damage your system.
 
 LICENSE
 =======
