@@ -9,6 +9,16 @@ Known issues
 No provision for security. This is intended to be run locally. If you write code that runs `rm -rf /`, it will damage your system.
 Please do not damage your system.
 
+Setup
+=====
+
+- Install PostgreSQL
+- Make a database called `arete`, username `arete`, password `arete`
+- Build a JAR with `mvn clean package`
+- Run the created JAR with `java -tar target/<output>.jar`.
+- You can check for bugs with `mvn spotbugs:check`. Right now it doesn't give any errors and I intend to keep it that
+way!
+
 LICENSE
 =======
 
