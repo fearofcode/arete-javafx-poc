@@ -60,22 +60,7 @@ public class MiktexLatexCommandPOC {
         return ((double)fontSize) * 72.27 / 10;
     }
 
-    public Thread commandOutputThread(Process p) {
-        return new Thread(() -> {
-            String line;
-            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(),
-                    StandardCharsets.UTF_8));
 
-            try {
-                while ((line = input.readLine()) != null)
-                    System.out.println(line);
-
-                input.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    }
 
     public String process() throws IOException, InterruptedException {
         final String wrappedMarkup  = generateWrappedMarkup();
@@ -109,13 +94,7 @@ public class MiktexLatexCommandPOC {
         );
 
         System.out.println(latexCmd);
-        final Process latexProcess = Runtime.getRuntime().exec(latexCmd);
-        /* TODO add option to not always do terminal output */
-        Thread latexThread = commandOutputThread(latexProcess);
-
-        latexThread.start();
-        int result = latexProcess.waitFor();
-        latexThread.join();
+        int result = StdoutCommandRunner.runCommandToStdout(latexCmd);
 
         if (result != 0) {
             System.out.println("Process failed with status: " + result);
@@ -139,11 +118,7 @@ public class MiktexLatexCommandPOC {
                 expectedDviPath
         );
 
-        final Process dviPngProcess = Runtime.getRuntime().exec(dviPngCommand);
-        Thread dviPngThread = commandOutputThread(dviPngProcess);
-        dviPngThread.start();
-        result = dviPngProcess.waitFor();
-        dviPngThread.join();
+        result = StdoutCommandRunner.runCommandToStdout(dviPngCommand);
 
         if (result != 0) {
             System.out.println("dvipng failed with status: " + result);
