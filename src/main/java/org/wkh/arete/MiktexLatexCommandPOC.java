@@ -84,7 +84,7 @@ public class MiktexLatexCommandPOC {
         checksum.update(markupBytes, 0, markupBytes.length);
         long checksumValue = checksum.getValue();
 
-        /* TODO check if file exists and avoid processing if so */
+        /* TODO check if existing checksum file already exists and avoid processing if so */
 
         final Path tempLatexFile = tempBase.resolve(checksumValue + ".tex");
 
