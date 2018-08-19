@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.wkh.arete.LatexDemoController"
+            prefHeight="800.0" prefWidth="600.0">
+    <top>
+        <VBox alignment="TOP_CENTER">
+            <TextArea prefRowCount="5" fx:id="markupInput" promptText="Enter valid LaTeX markup" />
+            <Button
+                    disable="true"
+                    fx:id="processInputButton"
+                    onAction="#generateLatex"
+                    text="Process"
+            />
+            <TextArea
+                    prefRowCount="5"
+                    promptText="Commands and output will appear here"
+                    editable="false"
+                    fx:id="commandConsoleOutput"
+            />
+            <ImageView fx:id="createdImage" />
+        </VBox>
+    </top>
+</BorderPane>

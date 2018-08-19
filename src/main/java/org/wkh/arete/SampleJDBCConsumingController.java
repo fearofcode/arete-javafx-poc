@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Controller
-public class SampleController implements Initializable {
-    private static final Logger log = LoggerFactory.getLogger(SampleController.class);
+public class SampleJDBCConsumingController implements Initializable {
+    private static final Logger log = LoggerFactory.getLogger(SampleJDBCConsumingController.class);
 
     @FXML public Button dbButton;
 
@@ -45,7 +45,6 @@ public class SampleController implements Initializable {
 
         // jdbcTemplate.execute("delete from customers");
 
-        // Split up the array of whole names into an array of first/last names
         final List<Object[]> splitUpNames = Stream.of("John Woo", "Jeff Dean", "Josh Bloch", "Josh Long")
                 .map(name -> name.split(" "))
                 .collect(Collectors.toList());

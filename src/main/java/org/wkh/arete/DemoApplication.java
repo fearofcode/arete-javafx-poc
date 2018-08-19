@@ -19,8 +19,9 @@ public class DemoApplication extends Application {
     @Override
     public void init() throws Exception {
         springContext = SpringApplication.run(DemoApplication.class);
-        URL sampleURL = getClass().getResource("/sample.fxml");
+        URL sampleURL = getClass().getResource("/latexIO.fxml");
         FXMLLoader fxmlLoader = new FXMLLoader(sampleURL);
+
         // this is the critical line that makes this entire thing work.
         // see http://www.greggbolinger.com/let-spring-be-your-javafx-controller-factory/ .
         fxmlLoader.setControllerFactory(springContext::getBean);
