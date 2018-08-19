@@ -10,9 +10,10 @@
             prefHeight="800.0" prefWidth="600.0">
     <top>
         <VBox alignment="TOP_CENTER">
-            <TextArea prefRowCount="5" fx:id="markupInput" promptText="Enter valid LaTeX markup" />
+            <TextArea prefRowCount="5"
+                      fx:id="markupInput"
+                      promptText="Enter valid LaTeX markup" />
             <Button
-                    disable="true"
                     fx:id="processInputButton"
                     onAction="#generateLatex"
                     text="Process"

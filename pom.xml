@@ -61,7 +61,7 @@
                     <target>${java.version}</target>
                     <compilerArgs>
                         <arg>--add-modules</arg>
-                        <arg>javafx.graphics,javafx.fxml,javafx.base,javafx.controls</arg>
+                        <arg>javafx.graphics,javafx.fxml,javafx.base,javafx.controls,javafx.swing</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>

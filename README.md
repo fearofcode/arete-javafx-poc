@@ -10,7 +10,7 @@ Known issues
 Please do not damage your system.
 - LaTeX will probably break if you give the application a path that contains spaces since LaTeX appears to handle
 spaces in commands extremely poorly.
-- `LatexDemoController` blocks the UI thread. I'll fix it.
+- The MikTex code blocks. I'll fix it.
 
 Setup
 =====
