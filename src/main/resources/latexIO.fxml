@@ -9,7 +9,7 @@
             fx:controller="org.wkh.arete.LatexDemoController"
             prefHeight="800.0" prefWidth="600.0">
     <top>
-        <VBox alignment="TOP_CENTER">
+        <VBox alignment="TOP_CENTER" spacing="10">
             <TextArea prefRowCount="5"
                       fx:id="markupInput"
                       promptText="Enter valid LaTeX markup" />
@@ -24,7 +24,8 @@
                     editable="false"
                     fx:id="commandConsoleOutput"
             />
-            <ImageView fx:id="createdImage" />
+            <ImageView
+                    fx:id="createdImage" />
         </VBox>
     </top>
 </BorderPane>
