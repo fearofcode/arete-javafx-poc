@@ -68,8 +68,8 @@ public class LatexDemoController implements Initializable {
         });
     }
 
-    private void processWithMiktex(String latexInput) {
-        final Task<Boolean> processingTask = new Task<>() {
+    private Task<Boolean> generateTask(String latexInput) {
+        return new Task<>() {
             @Override
             protected Boolean call() throws Exception {
                 final MiktexLatexCommandPOC processor = new MiktexLatexCommandPOC(latexInput, FONT_SIZE);
@@ -80,15 +80,18 @@ public class LatexDemoController implements Initializable {
                     String uriString = imageFile.toURI().toString();
                     Image pngImage = new Image(uriString, true);
                     createdImage.setImage(pngImage);
-                    commandConsoleOutput.appendText("Image processed");
+                    commandConsoleOutput.appendText("Image processed\n");
                     return true;
                 } else {
-                    commandConsoleOutput.appendText("Processing failed, see terminal for diagnostic information");
+                    commandConsoleOutput.appendText("Processing failed, see terminal for diagnostic information\n");
                     return false;
                 }
             }
         };
-        threadPool.submit(processingTask);
+    }
+
+    private void processWithMiktex(String latexInput) {
+        threadPool.submit(generateTask(latexInput));
     }
 
     @Override
