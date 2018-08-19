@@ -32,7 +32,7 @@ public class LatexDemoController implements Initializable {
         /* this is super shitty and needs to be converted to a background task */
         /* I will, I just want to get it to work */
 
-        final LatexCommandPOC processor = new LatexCommandPOC(latexInput, 18);
+        final MiktexLatexCommandPOC processor = new MiktexLatexCommandPOC(latexInput, 18);
         String pngPath = processor.process();
 
         if (pngPath != null) {

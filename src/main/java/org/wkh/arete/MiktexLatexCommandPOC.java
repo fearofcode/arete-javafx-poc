@@ -4,13 +4,14 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
-public class LatexCommandPOC {
+public class MiktexLatexCommandPOC {
     private final static String latexSubDirectory = "arete_latex_processing";
     private final static String latexBinDirectoryProperty = "latexBinDirectory";
     private final Path latexBinDirectory = Paths.get(System.getProperty(latexBinDirectoryProperty));
@@ -23,7 +24,7 @@ public class LatexCommandPOC {
 
     private final int fontSize;
 
-    public LatexCommandPOC(String markup, int fontSize) throws IOException {
+    public MiktexLatexCommandPOC(String markup, int fontSize) throws IOException {
         this.markup = markup;
         this.fontSize = fontSize;
 
@@ -62,7 +63,8 @@ public class LatexCommandPOC {
     public Thread commandOutputThread(Process p) {
         return new Thread(() -> {
             String line;
-            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(),
+                    StandardCharsets.UTF_8));
 
             try {
                 while ((line = input.readLine()) != null)
@@ -77,7 +79,7 @@ public class LatexCommandPOC {
 
     public String process() throws IOException, InterruptedException {
         final String wrappedMarkup  = generateWrappedMarkup();
-        final byte[] markupBytes = wrappedMarkup.getBytes();
+        final byte[] markupBytes = wrappedMarkup.getBytes(StandardCharsets.UTF_8);
         Checksum checksum = new CRC32();
         checksum.update(markupBytes, 0, markupBytes.length);
         long checksumValue = checksum.getValue();

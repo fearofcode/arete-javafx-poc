@@ -30,7 +30,7 @@ the command line:
     - Build a JAR with `mvn clean package`
     - Run the created JAR with `java -tar target/<output>.jar`.
 
-You can check for bugs with `mvn spotbugs:check`. I intend to run it before every commit and keep it clean.
+You can check for bugs with `mvn clean spotbugs:check`. I intend to run it before every commit and keep it clean.
 
 LICENSE
 =======
