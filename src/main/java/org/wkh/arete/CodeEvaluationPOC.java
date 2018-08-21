@@ -28,10 +28,7 @@ public class CodeEvaluationPOC {
         System.out.println(tempCodePath);
 
         final WatchService watchService = FileSystems.getDefault().newWatchService();
-        codeDirectory.register(watchService,
-                StandardWatchEventKinds.ENTRY_CREATE,
-                StandardWatchEventKinds.ENTRY_DELETE,
-                StandardWatchEventKinds.ENTRY_MODIFY);
+        codeDirectory.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
 
         WatchKey key;
 
@@ -39,19 +36,15 @@ public class CodeEvaluationPOC {
 
         Runtime.getRuntime().exec(editCmd);
 
-        /* the editor will change both content and last modified timestamp. wait for two events, then process */
-        int modifyEventCount = 0;
-
         while ((key = watchService.take()) != null) {
             for (WatchEvent<?> event : key.pollEvents()) {
+                /* TODO if we run this code as is, we'll evaluate code twice. I had code that checked for two modify
+                events, but I saw behavior where apparently that didn't work correctly.
+
+                so, we'll probably have to read the file and checksum it and only run on changes or something.
+                 */
                 if (event.kind().equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
-                    modifyEventCount++;
-
-                    if (modifyEventCount >= 2) {
-                        evaluateCode(evaluatorPath, tempCodePath);
-                        modifyEventCount = 0;
-                    }
-
+                    shellEvaluateCode(evaluatorPath, tempCodePath);
                 }
             }
             key.reset();
@@ -60,7 +53,7 @@ public class CodeEvaluationPOC {
         watchService.close();
     }
 
-    private static void evaluateCode(Path evaluatorPath, Path tempCodePath) throws IOException, InterruptedException {
+    private static void shellEvaluateCode(Path evaluatorPath, Path tempCodePath) throws IOException, InterruptedException {
         long start = System.nanoTime();
         final String evaluationCmd = String.format("\"%s\" \"%s\"",
                 evaluatorPath.toString(),
