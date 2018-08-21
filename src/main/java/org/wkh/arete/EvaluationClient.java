@@ -11,6 +11,9 @@ class EvaluationClient {
         try(Socket socket = new Socket("localhost", 50051)) {
             socket.getOutputStream().write(payload);
 
+
+            /* if we update the server to loop and keep the connection open, this will never terminate */
+            /* TODO it would be nice to open a socket and keep it open. we'd just need to know when to terminate */
             byte[] response = socket.getInputStream().readAllBytes();
             return new String(response, StandardCharsets.UTF_8);
         }
