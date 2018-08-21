@@ -50,15 +50,13 @@ the command line:
     - Build a JAR with `mvn clean package`
     - Run the created JAR with `java -tar target/<output>.jar`.
 
-- Make an `application.properties` like this when running the JAR that's in the same directory you're running the JAR from:
+- Make an `application.properties` like this when running the JAR that's in the same directory you're running the JAR from.
+
+See `application.properties.sample` for a sample you can just do like:
 
 ```
-editorPath=C:\\Program Files\\Sublime Text 3\\subl.exe
-latexBinDirectory=C:\\Program Files\\MiKTeX 2.9\\miktex\\bin\\x64
-backupPath=C:\\Users\\Warren\\Dropbox\\arete_backup\\
-pgDumpPath=C:\\Program Files\\PostgreSQL\\10\\bin\\pg_dump.exe
-databaseName=arete
-databaseUserName=arete
+cp application.properties.sample
+vi application.properties # edit as needed
 ```
 
 Fill in with suitable values for your machine.
