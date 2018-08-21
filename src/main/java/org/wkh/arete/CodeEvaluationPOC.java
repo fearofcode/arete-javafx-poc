@@ -6,14 +6,6 @@ import java.nio.file.*;
 public class CodeEvaluationPOC {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        String evaluatorPathProperty = System.getProperty("evaluatorPath");
-        if (evaluatorPathProperty == null) {
-            System.err.println("Set evaluatorPath property and try again");
-            return;
-        }
-
-        final Path evaluatorPath = Paths.get(evaluatorPathProperty);
-
         String editorPathProperty = System.getProperty("editorPath");
         if (editorPathProperty == null) {
             System.err.println("Set editorPath property and try again");
@@ -35,16 +27,20 @@ public class CodeEvaluationPOC {
         final String editCmd = String.format("\"%s\" \"%s\" ", editorPath.toString(), tempCodePath.toString());
 
         Runtime.getRuntime().exec(editCmd);
+        // warm up the client and the server
+        ipcEvaluateCode("warmup\n");
+
+        /* handle phenomenon of two edit events occurring: date modified and content changed */
+        /* sometimes this doesn't trigger? wtf? */
+        int eventCount = 0;
 
         while ((key = watchService.take()) != null) {
             for (WatchEvent<?> event : key.pollEvents()) {
-                /* TODO if we run this code as is, we'll evaluate code twice. I had code that checked for two modify
-                events, but I saw behavior where apparently that didn't work correctly.
+                eventCount++;
 
-                so, we'll probably have to read the file and checksum it and only run on changes or something.
-                 */
-                if (event.kind().equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
-                    shellEvaluateCode(evaluatorPath, tempCodePath);
+                if (eventCount >= 2) {
+                    ipcEvaluateCode(tempCodePath.toString());
+                    eventCount = 0;
                 }
             }
             key.reset();
@@ -53,16 +49,13 @@ public class CodeEvaluationPOC {
         watchService.close();
     }
 
-    private static void shellEvaluateCode(Path evaluatorPath, Path tempCodePath) throws IOException, InterruptedException {
+    private static void ipcEvaluateCode(String tempCodePath) throws IOException, InterruptedException {
+        System.out.println("evaluating...");
         long start = System.nanoTime();
-        final String evaluationCmd = String.format("\"%s\" \"%s\"",
-                evaluatorPath.toString(),
-                tempCodePath.toString());
 
-        StdoutCommandRunner.runCommandToStdout(evaluationCmd);
+        System.out.println(EvaluationClient.evaluatePath(tempCodePath));
         long end = System.nanoTime();
         long elapsedMs = (end - start) / 1_000_000;
         System.out.println("Ran in " + elapsedMs + "ms");
-        /* reset count for subsequent changes */
     }
 }
