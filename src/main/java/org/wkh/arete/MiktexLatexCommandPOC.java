@@ -1,9 +1,7 @@
 package org.wkh.arete;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,10 +11,9 @@ import java.util.zip.Checksum;
 
 public class MiktexLatexCommandPOC {
     private final static String latexSubDirectory = "arete_latex_processing";
-    private final static String latexBinDirectoryProperty = "latexBinDirectory";
-    private final Path latexBinDirectory = Paths.get(System.getProperty(latexBinDirectoryProperty));
-    private final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
-    private final Path tempBase = Paths.get(System.getProperty("java.io.tmpdir")).resolve(latexSubDirectory);
+    private Path latexBinDirectory;
+    private boolean isWindows = System.getProperty("os.name").startsWith("Windows");
+    private Path tempBase = Paths.get(System.getProperty("java.io.tmpdir")).resolve(latexSubDirectory);
 
     private final String markup;
     private final Path latexPath;
@@ -24,9 +21,11 @@ public class MiktexLatexCommandPOC {
 
     private final int fontSize;
 
-    public MiktexLatexCommandPOC(String markup, int fontSize) throws IOException {
+    public MiktexLatexCommandPOC(String markup, int fontSize, String latexBinDirectory) throws IOException {
         this.markup = markup;
         this.fontSize = fontSize;
+
+        this.latexBinDirectory = Paths.get(latexBinDirectory);
 
         latexPath = pathForExecutableName("latex");
         dviPngPath = pathForExecutableName("dvipng");

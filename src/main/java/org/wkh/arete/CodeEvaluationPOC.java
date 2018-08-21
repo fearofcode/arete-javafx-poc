@@ -1,14 +1,19 @@
 package org.wkh.arete;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.Properties;
 
 public class CodeEvaluationPOC {
     public static void main(String[] args) throws IOException, InterruptedException {
-        String editorPathProperty = System.getProperty("editorPath");
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("application.properties"));
+        String editorPathProperty = properties.getProperty("editorPath");
+
         if (editorPathProperty == null) {
-            System.err.println("Set editorPath property and try again");
+            System.err.println("Set editorPath property in application.properties and try again");
             return;
         }
 

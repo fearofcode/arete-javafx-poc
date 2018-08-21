@@ -15,6 +15,10 @@ import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 
 import javax.swing.*;
@@ -28,6 +32,9 @@ import java.util.concurrent.Executors;
 
 @Controller
 public class LatexDemoController implements Initializable {
+    @Value("${latexBinDirectory}")
+    String latexBinDirectory;
+
     private static final Logger log = LoggerFactory.getLogger(LatexDemoController.class);
 
     @FXML public Button processInputButton;
@@ -72,7 +79,8 @@ public class LatexDemoController implements Initializable {
         return new Task<>() {
             @Override
             protected Boolean call() throws Exception {
-                final MiktexLatexCommandPOC processor = new MiktexLatexCommandPOC(latexInput, FONT_SIZE);
+                final MiktexLatexCommandPOC processor = new MiktexLatexCommandPOC(latexInput, FONT_SIZE,
+                        latexBinDirectory);
                 String pngPath = processor.process();
 
                 if (pngPath != null) {
@@ -91,7 +99,15 @@ public class LatexDemoController implements Initializable {
     }
 
     private void processWithMiktex(String latexInput) {
-        threadPool.submit(generateTask(latexInput));
+        Task<Boolean> task = generateTask(latexInput);
+        task.exceptionProperty().addListener((observable, oldValue, newValue) ->  {
+            if(newValue != null) {
+                Exception ex = (Exception) newValue;
+                ex.printStackTrace();
+            }
+        });
+
+        threadPool.submit(task);
     }
 
     @Override
