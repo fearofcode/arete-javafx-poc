@@ -1,10 +1,10 @@
 package org.wkh.arete;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 
 public class CodeEvaluationPOC {
-
     public static void main(String[] args) throws IOException, InterruptedException {
         String editorPathProperty = System.getProperty("editorPath");
         if (editorPathProperty == null) {
@@ -16,6 +16,7 @@ public class CodeEvaluationPOC {
 
         final Path codeDirectory = Files.createTempDirectory("code_eval");
         final Path tempCodePath = Files.createTempFile(codeDirectory, "arete", ".py");
+        final File tempCodeFile = tempCodePath.toFile();
 
         System.out.println(tempCodePath);
 
@@ -28,34 +29,23 @@ public class CodeEvaluationPOC {
 
         Runtime.getRuntime().exec(editCmd);
         // warm up the client and the server
-        ipcEvaluateCode("warmup\n");
+        EvaluationClient.evaluatePath("warmup\n");
 
-        /* handle phenomenon of two edit events occurring: date modified and content changed */
-        /* sometimes this doesn't trigger? wtf? */
-        int eventCount = 0;
+        /* shitty hack to handle mostly two events getting fired but sometimes only one occurs when saving files */
+        long lastModified = 0;
 
         while ((key = watchService.take()) != null) {
             for (WatchEvent<?> event : key.pollEvents()) {
-                eventCount++;
+                long newLastModified = tempCodeFile.lastModified();
 
-                if (eventCount >= 2) {
-                    ipcEvaluateCode(tempCodePath.toString());
-                    eventCount = 0;
+                if (newLastModified > lastModified) {
+                    System.out.println(EvaluationClient.evaluatePath(tempCodePath.toString()));
+                    lastModified = newLastModified;
                 }
             }
             key.reset();
         }
 
         watchService.close();
-    }
-
-    private static void ipcEvaluateCode(String tempCodePath) throws IOException, InterruptedException {
-        System.out.println("evaluating...");
-        long start = System.nanoTime();
-
-        System.out.println(EvaluationClient.evaluatePath(tempCodePath));
-        long end = System.nanoTime();
-        long elapsedMs = (end - start) / 1_000_000;
-        System.out.println("Ran in " + elapsedMs + "ms");
     }
 }
