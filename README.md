@@ -55,11 +55,13 @@ the command line:
 See `application.properties.sample` for a sample you can just do like:
 
 ```
-cp application.properties.sample
+cp application.properties.sample application.properties
 vi application.properties # edit as needed
 ```
 
 Fill in with suitable values for your machine.
+
+It's on my todo list to glob the path to autoconfigure things where possible.
 
 You can check for bugs with `mvn clean spotbugs:check`. I intend to run it before every commit and keep it clean.
 
