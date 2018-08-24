@@ -1,28 +1,67 @@
 package org.wkh.arete;
 
 import java.io.*;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
+import java.util.*;
 
-class EvaluationClient {
-    public static String evaluatePath(String path) throws IOException {
-        byte[] payload = path.getBytes(StandardCharsets.UTF_8);
+public class EvaluationClient {
+    public static final String DONE = "--done--";
+    public static final byte[] WARMUP = "warmup\n".getBytes();
 
-        try(Socket socket = new Socket("localhost", 50051)) {
-            socket.getOutputStream().write(payload);
+    private final OutputStream stdin;
+    private final BufferedReader reader;
 
-            /* if we update the server to loop and keep the connection open, this will never terminate */
-            /* TODO it would be nice to open a socket and keep it open. we'd just need to know when to terminate */
-            byte[] response = socket.getInputStream().readAllBytes();
-            return new String(response, StandardCharsets.UTF_8);
-        }
+    public EvaluationClient() throws IOException {
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("application.properties"));
+        final String pythonPath = properties.getProperty("pythonPath");
+
+        final String path = "evaluator_server.py";
+
+        final ProcessBuilder builder = new ProcessBuilder(pythonPath, path);
+        final Process process = builder.start();
+        stdin = process.getOutputStream();
+        InputStream stdout = process.getInputStream();
+        reader = new BufferedReader(new InputStreamReader(stdout));
+        doWarmup();
     }
 
-    public static void main(String argv[]) throws IOException, InterruptedException {
-        final String path = "C:\\Users\\Warren\\AppData\\Local\\Temp\\code_eval1222849660043245737\\arete3624003994965102469.py";
+    public String evaluatePath(byte[] path) throws IOException {
+        stdin.write(path);
+
+        stdin.flush();
+
+        String line;
+
+        ArrayList<String> lines = new ArrayList<>();
+
+        do {
+            line = reader.readLine ();
+
+            if (line.startsWith(DONE)) {
+                break;
+            }
+
+            lines.add(line);
+        } while (true);
+
+        return String.join("\n", lines);
+    }
+
+    private void doWarmup() throws IOException {
+        stdin.write(WARMUP);
+        stdin.flush();
+        reader.readLine();
+    }
+
+    public static void main(String[] args) throws IOException {
+        final EvaluationClient client = new EvaluationClient();
+        final Scanner scanner = new Scanner(System.in);
+        final byte[] path = (scanner.nextLine() + "\n").getBytes();
         long start = System.nanoTime();
-        System.out.println(evaluatePath(path));
+        System.out.println(client.evaluatePath(path));
         long end = System.nanoTime();
+
         System.out.println((end - start) / 1_000_000.0);
     }
+
 }
