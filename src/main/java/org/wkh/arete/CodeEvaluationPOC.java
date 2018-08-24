@@ -1,12 +1,18 @@
 package org.wkh.arete;
 
+import io.methvin.watcher.DirectoryChangeEvent;
+import io.methvin.watcher.DirectoryWatcher;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.Properties;
 
 public class CodeEvaluationPOC {
-    public static void main(String[] args) throws IOException, InterruptedException {
+    //public static long lastModified;
+
+    public static void main(String[] args) throws IOException {
         Properties properties = new Properties();
         properties.load(new FileInputStream("application.properties"));
         String editorPathProperty = properties.getProperty("editorPath");
@@ -20,25 +26,23 @@ public class CodeEvaluationPOC {
 
         final Path codeDirectory = Files.createTempDirectory("code_eval");
         final Path tempCodePath = Files.createTempFile(codeDirectory, "arete", ".py");
+        //File codeFile = tempCodePath.toFile();
         final byte[] payload = (tempCodePath.toString() + "\n").getBytes();
-
-        /* this performs like shit on Mac/Linux due to Java not implementing native file watching */
-        final WatchService watchService = FileSystems.getDefault().newWatchService();
-        codeDirectory.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
-
-        WatchKey key;
 
         final ProcessBuilder builder = new ProcessBuilder(editorPath.toString(), tempCodePath.toString());
         builder.start();
         EvaluationClient client = new EvaluationClient();
 
-        while ((key = watchService.take()) != null) {
-            for (WatchEvent<?> event : key.pollEvents()) {
-                System.out.println(client.evaluatePath(payload));
-            }
-            key.reset();
-        }
-
-        watchService.close();
+        DirectoryWatcher watcher = DirectoryWatcher.builder()
+                .path(codeDirectory) // or use paths(directoriesToWatch)
+                .listener(event -> {
+                    System.out.println(client.evaluatePath(payload));
+                })
+                .logger(null)
+                .fileHashing(false) // defaults to true
+                // .logger(logger) // defaults to LoggerFactory.getLogger(DirectoryWatcher.class)
+                // .watchService(watchService) // defaults based on OS to either JVM WatchService or the JNA macOS WatchService
+                .build();
+        watcher.watch();
     }
 }

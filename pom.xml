@@ -49,6 +49,11 @@
             <artifactId>jlatexmath</artifactId>
             <version>1.0.7</version>
         </dependency>
+		<dependency>
+			<groupId>io.methvin</groupId>
+			<artifactId>directory-watcher</artifactId>
+			<version>0.7.0</version>
+		</dependency>
     </dependencies>
 
 	<build>
