@@ -17,7 +17,7 @@ public class SimpleClient {
             return;
         }
 
-        final String path = "src\\main\\python\\simple_server.py";
+        final String path = "simple_server.py";
 
         final ProcessBuilder builder = new ProcessBuilder(pythonPath, path);
         final Process process = builder.start();
@@ -28,7 +28,7 @@ public class SimpleClient {
 
         long start = System.nanoTime();
 
-        stdin.write("C:\\Users\\Warren\\AppData\\Local\\Temp\\code_eval1222849660043245737\\arete3624003994965102469.py\n".getBytes());
+        stdin.write("/Users/Warren/Downloads/evaluation_test.py\n".getBytes());
         stdin.flush();
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
